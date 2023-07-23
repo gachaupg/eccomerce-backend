@@ -52,5 +52,5 @@ mongoose
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
-  .then(() => console.log("MongoDB connection established..."))
+  .then(() => console.log("MongoDB connection establisheds..."))
   .catch((error) => console.error("MongoDB connection failed:", error.message));
