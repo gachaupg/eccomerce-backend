@@ -1,4 +1,4 @@
-const { Order } = require("../models/order")
+const { Order } = require("../models/Order")
 const { auth1, isUser, isAdmin } = require("../middleware/auth");
 const moment = require('moment')
 
