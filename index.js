@@ -3,7 +3,6 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const register = require("./routes/register");
 const login = require("./routes/login");
-const orders = require("./routes/orders");
 const morgan = require('morgan')
 const bodyParser = require('body-parser');
 const stripe = require("./routes/stripe");
@@ -30,7 +29,6 @@ app.use(cors(corsOptions));
 app.use("/api/users", users)
 app.use("/api/register", register);
 app.use("/api/login", login);
-app.use("/api/orders", orders);
 app.use("/api/stripe", stripe);
 app.use("/api/products", productsRoute);
 
