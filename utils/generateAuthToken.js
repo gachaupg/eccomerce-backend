@@ -7,6 +7,10 @@ const generateAuthToken = (user) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      country:user.country,
+      phone:user.phone,
+      city:user.city,
+      address:user.address,
       isAdmin: user.isAdmin,
     },
     jwtSecretKey
