@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
 
   console.log("here");
 
-  const { name,country,phone,address,city, email, password } = req.body;
+  const { name,country,phone,address,city,email, password } = req.body;
 
   user = new User({ name,country,phone,address,city, email, password });
 

@@ -26,19 +26,17 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use(cors());
 app.use(express.json());
 app.use(cors(corsOptions));
+
+app.get("/", (req, res) => {
+  res.send("Welcome our to online shop API...");
+});
 app.use("/api/users", users)
 app.use("/api/register", register);
 app.use("/api/login", login);
 app.use("/api/stripe", stripe);
 app.use("/api/products", productsRoute);
 
-app.get("/", (req, res) => {
-  res.send("Welcome our to online shop API...");
-});
 
-app.get("/products", (req, res) => {
-  res.send(products);
-});
 
 const uri = process.env.DB_URI;
 const port = process.env.PORT || 5000;
