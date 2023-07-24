@@ -4,7 +4,7 @@ const moment = require('moment')
 const router =require("express").Router()
 
 
-router.get ('/stats', isAdmin, async (req,res)=>{
+router.get ('/stats', async (req,res)=>{
     const previosMonth=moment()
     .month(moment().month()-1)
     .set('date',1)
