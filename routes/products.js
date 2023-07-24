@@ -60,17 +60,9 @@ router.delete("/:id", async (req, res) => {
 //GET ALL PRODUCTS
 
 router.get("/", async (req, res) => {
-  const qbrand = req.query.brand;
+  ;
   try {
-    let products;
-
-    if (qbrand) {
-      products = await Product.find({
-        brand: qbrand,
-      });
-    } else {
-      products = await Product.find();
-    }
+   const products =await Product.find()
 
     res.status(200).send(products);
   } catch (error) {
