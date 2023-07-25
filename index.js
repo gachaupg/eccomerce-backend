@@ -49,4 +49,4 @@ mongoose
   .then(() => {
     app.listen(process.env.PORT, () => console.log(`Server running on port ${port}`));
   })
-  .catch((error) => console.log(`${error} did not connect`));
+  .catch((error) => console.log(`${error} did nots connect`));
