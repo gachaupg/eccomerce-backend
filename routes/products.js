@@ -2,12 +2,11 @@ const { Product } = require("../models/product");
 const {auth1 , isUser, isAdmin } = require("../middleware/auth");
 const { auth } = require("../middleware/auth1");
 const cloudinary = require("../utils/cloudinary");
-const { getTours } = require("../controllers/products");
 
 const router = require("express").Router();
 
 //CREATE
-router.get('/test', getTours)
+
 router.post('/',async(req,res)=>{
   const { name, brand, desc, price,ram,rom,battery,camera,os,sim, image,No,location } = req.body;
 
@@ -64,9 +63,8 @@ router.get("/", async (req, res) => {
   
   try {
    const products =await Product.find()
-   res.json(tours);
-    
 
+    res.status(200).send(products);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -74,11 +72,10 @@ router.get("/", async (req, res) => {
 
 //GET PRODUCT
 
-router.get("/finds/:id", async (req, res) => {
+router.get("/find/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    res.status(200).json(product);
-
+    res.status(200).send(product);
   } catch (error) {
     res.status(500).send(error);
   }
