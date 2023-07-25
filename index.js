@@ -40,6 +40,8 @@ app.use("/api/products", productsRoute);
 
 
 
+const port = process.env.PORT || 5000;
+
 
 
 mongoose
