@@ -49,7 +49,7 @@ router.get ('/stats/all',  async (req,res)=>{
         }
        
         ]);
-        res.status(200).send(users);
+        res.status(200).json(users);
     } catch (error) {
         console.log(error);
         res.status(500).send(error)

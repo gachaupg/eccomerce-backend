@@ -60,11 +60,12 @@ router.delete("/:id", async (req, res) => {
 //GET ALL PRODUCTS
 
 router.get("/", async (req, res) => {
-  ;
+  
   try {
    const products =await Product.find()
+   res.json(tours);
+    
 
-    res.status(200).send(products);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -75,7 +76,8 @@ router.get("/", async (req, res) => {
 router.get("/find/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    res.status(200).send(product);
+    res.status(200).json(product);
+
   } catch (error) {
     res.status(500).send(error);
   }
