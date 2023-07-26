@@ -40,13 +40,13 @@ app.use("/api/products", productsRoute);
 
 
 
-const port = process.env.PORT || 5000;
+const port =5000;
 
 
 
 mongoose
   .connect(process.env.DB_URI)
   .then(() => {
-    app.listen(process.env.PORT, () => console.log(`Server running on port ${port}`));
+    app.listen(port, () => console.log(`Server running on port ${port}`));
   })
   .catch((error) => console.log(`${error} did nots connect`));

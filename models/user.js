@@ -11,11 +11,26 @@ const userSchema = new mongoose.Schema(
       unique: true,
     },
     country:{type:String},
+    img:{type:String},
     phone:{type:Number},
     city:{type:String},
+    otp:{
+      verification_code: {
+        type: String,
+       
+      },
+      expires: {
+        type: Date,
+        
+      },
+      message_text: {
+        type: String,
+        
+      },
+    },
     address:{type:String},
     // image: { type: Object },
-    password: { type: String, required: true, minlength: 3, maxlength: 1024 },
+    password: { type: String, minlength: 3, maxlength: 1024 },
     isAdmin: { type: Boolean, default: false },
   },
   { timestamps: true }
