@@ -3,7 +3,7 @@ const { User } = require("../models/user");
 const Joi = require("joi");
 const express = require("express");
 const textflow = require("textflow.js");
-textflow.useKey("NQu8uqDdS4hzaUz032Vfp6JJdU97onnRsruZq4xpdsSbXygjE3VCr5d63s8h0QTM");
+textflow.useKey("lm0VZnCdPVHGPibl5CkLKg33udAXsRPSiiWj4BYi2faSdOAZowGJYjunA8Boyely");
 
 const generateAuthToken = require("../utils/generateAuthToken");
 
@@ -16,18 +16,29 @@ router.post("/", async (req, res) => {
 
   console.log("here");
 
-  const { name,country,phone,address,city,email,img, password } = req.body;
+  const { name,country,phone,address,city,age,email,img, password } = req.body;
 
   const verificationOptions ={
     service_name: 'My super cool app',
     seconds: 600,
 }
+// Sending an SMS in one line
+textflow.sendSMS("+254789312381", "Dummy message text...");
 
+// OTP Verification
+// User has sent his phone number for verification
+textflow.sendVerificationSMS("+254789312381", verificationOptions);
 
-const result = await textflow.sendVerificationSMS(phone, verificationOptions);
+// Show him the code submission form
+// We will handle the verification code ourselves
+
+// The user has submitted the code
+let result = await textflow.verifyCode("+254789312381", "USER_ENTERED_CODE"); 
+
+// const result = await textflow.sendVerificationSMS(`254${phone}`, verificationOptions);
 
 console.log(result);
-  user = new User({ name,country,phone,address,city, email,img, password,otp: result });
+  user = new User({ name,country,phone,address,age,city, email,img, password});
 
   // const salt = await bcrypt.genSalt(12);
   // user.password = await bcrypt.hash(usyyer.password, salt);
@@ -36,7 +47,7 @@ console.log(result);
 
   const token = generateAuthToken(user);
 
-  res.send(token);
+  res.send({token,user});
 });
 
 

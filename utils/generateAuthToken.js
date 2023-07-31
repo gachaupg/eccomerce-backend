@@ -8,6 +8,8 @@ const generateAuthToken = (user) => {
       name: user.name,
       email: user.email,
       country:user.country,
+      img:user.img,
+      age:user.age,
       phone:user.phone,
       city:user.city,
       address:user.address,

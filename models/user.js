@@ -14,19 +14,10 @@ const userSchema = new mongoose.Schema(
     img:{type:String},
     phone:{type:Number},
     city:{type:String},
+    age:{type:String},
     otp:{
-      verification_code: {
-        type: String,
-       
-      },
-      expires: {
-        type: Date,
-        
-      },
-      message_text: {
-        type: String,
-        
-      },
+     type:Number,
+     default:0
     },
     address:{type:String},
     // image: { type: Object },
