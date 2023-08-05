@@ -9,6 +9,7 @@ const stripe = require("./routes/stripe");
 const productsRoute = require("./routes/products");
 const users=require('./routes/users')
 const verify=require('./routes/verifyPhone')
+const verifyRouter=require('./routes/VerifyOTP.js')
 const categoriesRoute=require('./routes/categories')
 
 const products = require("./products");
@@ -34,6 +35,7 @@ app.get("/", (req, res) => {
 });
 app.use("/api/users", users)
 app.use("/api",verify)
+app.use("/api",verifyRouter)
 app.use("/api/register", register);
 app.use("/api/login", login);
 app.use("/api/stripe", stripe);
