@@ -1,10 +1,9 @@
 const bcrypt = require("bcryptjs");
 const { User } = require("../models/user");
-const Joi = require("joi");
 const express = require("express");
 const generateAuthToken = require("../utils/generateAuthToken");
 const textflow = require("textflow.js");
-const{ OTPver} = require("../models/OtpV.js");
+const { OTPver } = require("../models/OtpV.js");
 const nodemailer = require("nodemailer");
 textflow.useKey(
   "lm0VZnCdPVHGPibl5CkLKg33udAXsRPSiiWj4BYi2faSdOAZowGJYjunA8Boyely"
@@ -13,163 +12,106 @@ textflow.useKey(
 const router = express.Router();
 
 router.post("/", async (req, res) => {
-  let user = await User.findOne({ email: req.body.email });
-  if (user) return res.status(400).send("User already exists...");
+  try {
+    let user = await User.findOne({ email: req.body.email });
+    if (user) return res.status(400).send("User already exists...");
 
-  const verificationOptions = {
-    service_name: "My super cool app",
-    seconds: 600,
-  };
-  // Sending an SMS in one line
-  textflow.sendSMS("+254789312381", "Dummy message text...");
+    const verificationOptions = {
+      service_name: "My super cool app",
+      seconds: 600,
+    };
 
-  // OTP Verification
-  // User has sent his phone number for verification
-  textflow.sendVerificationSMS("+254789312381", verificationOptions);
+    const { name, email, phone, address, city, age, img, password } = req.body;
 
-  // Show him the code submission form
-  // We will handle the verification code ourselves
+    const result = await textflow.sendVerificationSMS(
+      `254${phone}`,
+      verificationOptions
+    );
 
-  // The user has submitted the code
-  // let result = await textflow.verifyCode("+254789312381", "USER_ENTERED_CODE");
+    console.log(result);
 
-  const { name, email, phone, address, city, age, img, password } = req.body;
-  const result = await textflow.sendVerificationSMS(
-    `254${phone}`,
-    verificationOptions
-  );
+    user = new User({
+      name,
+      email,
+      verified: false,
+      password,
+      phone,
+      address,
+      city,
+      age,
+      img,
+    });
 
-  console.log(result);
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
 
-  user = new User({
-    name,
-    email,
-    verified: false,
-    password,
-    phone,
-    address,
-    city,
-    age,
-    email,
-    img,
-  });
+    await user.save();
 
-  const salt = await bcrypt.genSalt(10);
-  user.password = await bcrypt.hash(user.password, salt);
+    sendOTP(user, user.email, res); // Pass the email as the third parameter
 
-  await user.save().then((result) => {
-    sendOTP(result, res);
-  });
-
-  const token = generateAuthToken(user);
-
-  res.send(token);
+    const token = generateAuthToken(user);
+    res.send(token);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-const sendOTP = async ({ _id, email ,res}) => {
-  
+const sendOTP = async (user, email, res) => {
+
+const id= user._id
+
+
   try {
     const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
-    console.log(otp);
-
+    
     var mailOptions = {
       from: "petergachau57@gmail.com",
       to: email,
       subject: "Notification from easy pay",
-    
       html: `
       <h3>Notification</h3>
       <ul>
       <li>
-      Message:${otp}
+      Message: ${otp}
       </li>
       </ul>
-      
-      
       `,
     };
+
     var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: "petergachau57@gmail.com",
         pass: "atgwlwufhipufmte",
-        //   kvoqqhjcvsmgupko
       },
     });
-    const salt = await bcrypt.genSalt(10);
-    const hashed = await bcrypt.hash(otp, salt);
-console.log(hashed);   
-    const OTpVaribles = await new OTPver({
-      userId: _id,
-      otp,
+
+    const salt = await bcrypt.genSalt(5);
+    const hashedOTP = await bcrypt.hash(otp, salt);
+
+    const OTPDoc = new OTPver({
+      userId: id,
+      email:user.email,
+      otp, // Store the hashed OTP in the database
       createdAt: Date.now(),
       expiresAt: Date.now() + 3600000,
     });
 
-    await OTpVaribles.save();
+    await OTPDoc.save();
     transporter.sendMail(mailOptions, function (error, info) {
       if (error) {
         console.log(error);
+        res.status(500).send("Failed to send OTP via email.");
       } else {
         console.log("Email sent: " + info.response);
+        res.send("OTP sent via email.");
       }
     });
-   
-
-    
   } catch (error) {
     console.log(error);
+    // res.status(500).send("Internal Server Error");
   }
 };
 
-
-
 module.exports = router;
-
-// const bcrypt = require("bcryptjs");
-// const { User } = require("../models/user");
-// const Joi = require("joi");
-// const express = require("express");
-
-// const generateAuthToken = require("../utils/generateAuthToken");
-
-// const router = express.Router();
-
-// router.post("/", async (req, res) => {
-
-//   let user = await User.findOne({ email: req.body.email });
-//   if (user) return res.status(400).send("User with already exists...");
-
-//   console.log("here");
-
-//   const { name,country,phone,address,city,age,email,img, password } = req.body;
-
-// const salt = await bcrypt.genSalt(10);
-// userpassword = await bcrypt.hash(user.password, salt);
-//   user = new User({ name,country,phone,address,age,city, email,img, password});
-
-//   // const salt = await bcrypt.genSalt(12);
-//   // user.password = await bcrypt.hash(usyyer.password, salt);
-
-//   await user.save();
-
-//   const token = generateAuthToken(user);
-
-//   res.send({token,user});
-// });
-
-// // router.post('/verify', async(req, res) =>{
-
-// //     const {phone, otp} = req.body;
-
-// //     let result = await textflow.verifyCode(phone, otp);
-
-// //     if(result.valid)
-// //     {
-// //         // your server logic
-// //         return res.status(200).json(result.message)
-// //     }
-// //     return res.status(result.status).json(result.message)
-// //     })
-
-// module.exports = router;
