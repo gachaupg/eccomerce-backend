@@ -10,8 +10,8 @@ textflow.useKey(
   "lm0VZnCdPVHGPibl5CkLKg33udAXsRPSiiWj4BYi2faSdOAZowGJYjunA8Boyely"
 );
 
-const accountSid = 'ACfbce203c3e85c1974dca9f1da40c5ef5';
-const authToken = '0e1d51b00870041cf7f7474f72494753'; 
+const accountSid =process.env.accountSid;
+const authToken = process.env.accountSid; 
 const client = new twilio(accountSid, authToken);
 
 const router = express.Router();
