@@ -6,12 +6,14 @@ const textflow = require("textflow.js");
 const { OTPver } = require("../models/OtpV.js");
 const twilio = require('twilio'); 
 const nodemailer = require("nodemailer");
+
+require("dotenv").config();
 textflow.useKey(
   "lm0VZnCdPVHGPibl5CkLKg33udAXsRPSiiWj4BYi2faSdOAZowGJYjunA8Boyely"
 );
 
 const accountSid =process.env.accountSid;
-const authToken = process.env.accountSid; 
+const authToken = process.env.TOKEN; 
 const client = new twilio(accountSid, authToken);
 
 const router = express.Router();
