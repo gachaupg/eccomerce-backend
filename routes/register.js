@@ -4,10 +4,15 @@ const express = require("express");
 const generateAuthToken = require("../utils/generateAuthToken");
 const textflow = require("textflow.js");
 const { OTPver } = require("../models/OtpV.js");
+const twilio = require('twilio'); 
 const nodemailer = require("nodemailer");
 textflow.useKey(
   "lm0VZnCdPVHGPibl5CkLKg33udAXsRPSiiWj4BYi2faSdOAZowGJYjunA8Boyely"
 );
+
+const accountSid = 'ACfbce203c3e85c1974dca9f1da40c5ef5';
+const authToken = '0e1d51b00870041cf7f7474f72494753'; 
+const client = new twilio(accountSid, authToken);
 
 const router = express.Router();
 
@@ -22,6 +27,8 @@ router.post("/", async (req, res) => {
     };
 
     const { name, email, phone, address, city, age, img, password } = req.body;
+
+    const otp = `${Math.floor(1000 + Math.random() * 9000)}`;
 
     const result = await textflow.sendVerificationSMS(
       `254${phone}`,
@@ -40,6 +47,7 @@ router.post("/", async (req, res) => {
       city,
       age,
       img,
+      verificationCode: otp // Add the verification code to the user object
     });
 
     const salt = await bcrypt.genSalt(10);
@@ -47,7 +55,8 @@ router.post("/", async (req, res) => {
 
     await user.save();
 
-    sendOTP(user, user.email, res); // Pass the email as the third parameter
+    // Send the OTP to the user's phone number
+    await SMS(phone,email,user, otp);
 
     const token = generateAuthToken(user);
     res.send(token);
@@ -56,6 +65,42 @@ router.post("/", async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+// Move the SMS function outside of the router
+const SMS = async (phone,user,email, otp) => {
+  // Send Text
+  try {
+    await client.messages.create({
+      body: `Your verification code: ${otp}`,
+      to:`+254${phone.substring(1)}`,  // Text this number
+      from: '+17624753835' // From a valid Twilio number
+    });
+    const OTPDoc = new OTPver({
+      userId:user._id,
+      email:user.email,
+      otp,
+      phone, // Store the hashed OTP in the database
+      createdAt: Date.now(),
+      expiresAt: Date.now() + 3600000,
+    });
+
+    await OTPDoc.save();
+    console.log("Verification code sent successfully.");
+  } catch (error) {
+    console.error("Error sending verification code:", error);
+  }
+}
+
+
+router.delete("/:id", async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.status(200).send("Product has been deleted...");
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
 
 const sendOTP = async (user, email, res) => {
 

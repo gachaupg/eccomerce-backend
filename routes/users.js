@@ -56,5 +56,12 @@ router.get ('/stats/all',  async (req,res)=>{
     }
 })
 
-
+router.delete("/:id", async (req, res) => {
+    try {
+      await User.findByIdAndDelete(req.params.id);
+      res.status(200).send("Product has been deleted...");
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  });
 module.exports= router;
