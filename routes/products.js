@@ -84,18 +84,50 @@ router.get("/find/:id", async (req, res) => {
 //UPDATE
 
 router.put("/:id",  async (req, res) => {
-  try {
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-    res.status(200).send(updatedProduct);
-  } catch (error) {
-    res.status(500).send(error);
+  if(req.body.productImg){
+    try {
+      const destry=await cloudinary.uploader.destroy(
+        req.body.product.image.public_id
+      );
+      if (destry){
+        const uploaded=await cloudinary.uploader.upload(
+          req.body.productImg,{
+            upload_preset: "peter-main",
+
+          }
+        );
+        if(uploaded){
+          const upadte=await Product.findByIdAndUpdate(
+            req.params.id,
+            {
+              $set: {
+                ...req.body.product,
+                image:uploaded,
+              }
+            },
+            {new:true}
+          )
+          res.status(200).send(upadte)
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }else{
+    try {
+      const updatedProduct = await Product.findByIdAndUpdate(
+        req.params.id,
+        {
+          $set: req.body,
+        },
+        { new: true }
+      );
+      res.status(200).send(updatedProduct);
+    } catch (error) {
+      res.status(500).send(error);
+    }
   }
+ 
 });
 
 router.get('/:id' ,  async(req,res)=>{
