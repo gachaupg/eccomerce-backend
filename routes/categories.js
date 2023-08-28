@@ -110,7 +110,7 @@ router.get ('/phone',  async (req,res)=>{
     // res.status(200).send(previosMonth)
     try {
         const users= await tourModal.aggregate([
-            {$match:{},
+            {$match:{brand:'phones'},
         
         }
        
@@ -178,25 +178,28 @@ router.get ('/laptop',  async (req,res)=>{
         res.status(500).send(error)
     }
 })
-router.get ('/electronic',  async (req,res)=>{
-    const previosMonth=moment()
-    .month(moment().month()-1)
-    .set('date',1)
-    .format('YYYY-MM-DD HH:mm:ss');
-    // res.status(200).send(previosMonth)
+router.get('/electronic', async (req, res) => {
+    const previosMonth = moment()
+      .month(moment().month() - 1)
+      .set('date', 1)
+      .format('YYYY-MM-DD HH:mm:ss');
+  
     try {
-        const users= await tourModal.aggregate([
-            {$match:{brand:'electronic'},
-        
+      const users = await tourModal.aggregate([
+        {
+          $match: {
+            category: 'electronic'
+          }
         }
-       
-        ]);
-        res.status(200).send(users);
+        // Add more stages to your aggregation pipeline if needed
+      ]);
+  
+      res.status(200).send(users);
     } catch (error) {
-        console.log('error',error);
-        res.status(500).send(error)
+      console.log('error', error);
+      res.status(500).send(error);
     }
-})
+  });
 router.get ('/funatures',  async (req,res)=>{
     const previosMonth=moment()
     .month(moment().month()-1)

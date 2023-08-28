@@ -11,6 +11,7 @@ const users=require('./routes/users')
 const verify=require('./routes/verifyPhone')
 const verifyRouter=require('./routes/VerifyOTP.js')
 const categoriesRoute=require('./routes/categories')
+const orderRouter =require('./routes/orders')
 
 const products = require("./products");
 
@@ -41,7 +42,7 @@ app.use("/api/login", login);
 app.use("/api/stripe", stripe);
 app.use("/api/products", productsRoute);
 app.use("/api/categories", categoriesRoute);
-
+app.use("/api", orderRouter)
 
 
 
